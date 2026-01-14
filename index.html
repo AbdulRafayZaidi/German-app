@@ -3,102 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>German Ending Trainer</title>
+    <title>German Grammar Coach</title>
     <style>
-        :root { --primary: #007bff; --success: #28a745; --error: #dc3545; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 450px; text-align: center; }
-        .context-label { color: #6c757d; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .sentence { font-size: 1.6rem; font-weight: 600; margin: 20px 0; color: #1a1a1a; }
-        .input-group { margin: 20px 0; }
-        input { font-size: 1.5rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #dee2e6; border-radius: 8px; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: var(--primary); }
-        .correct { border-color: var(--success) !important; background: #e9f7ef; }
-        .wrong { border-color: var(--error) !important; background: #fdf2f2; }
-        button { background: var(--primary); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        #feedback { margin-top: 20px; min-height: 24px; font-weight: 600; }
+        :root { --primary: #007bff; --bg: #f8f9fa; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .hidden { display: none; }
+        
+        /* Menu Styling */
+        .menu-btn { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; }
+        .menu-btn:hover { background: #f0f7ff; border-color: var(--primary); }
+
+        /* Explanation Styling */
+        .explanation-box { line-height: 1.6; color: #444; }
+        table { margin: 15px 0; font-size: 0.9rem; }
+        
+        /* Exercise Styling */
+        .sentence { font-size: 1.5rem; margin: 20px 0; font-weight: bold; }
+        input { font-size: 1.5rem; width: 70px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 5px; }
+        .correct { border-color: green; background: #eaffea; }
+        .wrong { border-color: red; background: #ffeaea; }
+        button.main-btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="context-label" id="context">Loading...</div>
-    <div class="sentence" id="sentence-display">---</div>
-    
-    <div class="input-group">
-        <input type="text" id="answer-input" placeholder="--" autocomplete="off" autocapitalize="off">
+    <div id="screen-menu">
+        <h2>Choose a Topic</h2>
+        <div id="module-list"></div>
     </div>
 
-    <div id="feedback"></div>
-    <button onclick="handleAction()" id="action-btn">Check Answer</button>
+    <div id="screen-explanation" class="hidden">
+        <h2 id="exp-title"></h2>
+        <div id="exp-content" class="explanation-box"></div>
+        <button class="main-btn" onclick="startExercise()">I'm Ready!</button>
+    </div>
+
+    <div id="screen-exercise" class="hidden">
+        <small id="ex-context" style="color: #888"></small>
+        <div class="sentence" id="sentence-display"></div>
+        <input type="text" id="answer-input" autocomplete="off" autocapitalize="off">
+        <div id="feedback" style="margin-top: 10px; font-weight: bold;"></div>
+        <button class="main-btn" id="action-btn" onclick="handleAction()">Check</button>
+    </div>
 </div>
 
 <script src="exercises.js"></script>
-
 <script>
-    let currentIdx = 0;
+    let currentModule = null;
+    let currentQIdx = 0;
     let isChecking = true;
 
-    function init() {
-        if (typeof exercises === 'undefined' || exercises.length === 0) {
-            document.getElementById('sentence-display').innerText = "Error: exercises.js not found or empty.";
-            return;
-        }
-        // Optional: Shuffle exercises on start
-        exercises.sort(() => Math.random() - 0.5);
-        showExercise();
+    function initMenu() {
+        const list = document.getElementById('module-list');
+        exerciseModules.forEach((mod, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'menu-btn';
+            btn.innerHTML = `<b>${index + 1}.</b> ${mod.title}`;
+            btn.onclick = () => showExplanation(index);
+            list.appendChild(btn);
+        });
     }
 
-    function showExercise() {
-        const ex = exercises[currentIdx];
-        document.getElementById('context').innerText = ex.context;
-        document.getElementById('sentence-display').innerText = ex.sentence;
+    function showExplanation(index) {
+        currentModule = exerciseModules[index];
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-explanation').classList.remove('hidden');
+        document.getElementById('exp-title').innerText = currentModule.title;
+        document.getElementById('exp-content').innerHTML = currentModule.explanation;
+    }
+
+    function startExercise() {
+        document.getElementById('screen-explanation').classList.add('hidden');
+        document.getElementById('screen-exercise').classList.remove('hidden');
+        currentQIdx = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = currentModule.questions[currentQIdx];
+        document.getElementById('sentence-display').innerText = q.sentence;
+        document.getElementById('ex-context').innerText = q.context;
         const input = document.getElementById('answer-input');
         input.value = "";
         input.className = "";
         input.disabled = false;
         input.focus();
         document.getElementById('feedback').innerText = "";
-        document.getElementById('action-btn').innerText = "Check Answer";
+        document.getElementById('action-btn').innerText = "Check";
         isChecking = true;
     }
 
     function handleAction() {
         if (isChecking) {
-            checkAnswer();
+            const userAnsw = document.getElementById('answer-input').value.toLowerCase().trim();
+            const correctAnsw = currentModule.questions[currentQIdx].ending;
+            const input = document.getElementById('answer-input');
+            
+            if (userAnsw === correctAnsw) {
+                input.className = "correct";
+                document.getElementById('feedback').innerText = "✓ Richtig!";
+                document.getElementById('feedback').style.color = "green";
+            } else {
+                input.className = "wrong";
+                document.getElementById('feedback').innerText = `✗ Falsch! Correct: -${correctAnsw}`;
+                document.getElementById('feedback').style.color = "red";
+            }
+            input.disabled = true;
+            document.getElementById('action-btn').innerText = "Next";
+            isChecking = false;
         } else {
-            nextExercise();
+            currentQIdx++;
+            if (currentQIdx < currentModule.questions.length) {
+                loadQuestion();
+            } else {
+                alert("Module Complete!");
+                location.reload(); // Go back to menu
+            }
         }
     }
 
-    function checkAnswer() {
-        const userAnsw = document.getElementById('answer-input').value.toLowerCase().trim();
-        const correctAnsw = exercises[currentIdx].ending.toLowerCase();
-        const inputField = document.getElementById('answer-input');
-        const feedback = document.getElementById('feedback');
-
-        if (userAnsw === correctAnsw) {
-            inputField.classList.add("correct");
-            feedback.innerText = "✓ Richtig!";
-            feedback.style.color = "var(--success)";
-        } else {
-            inputField.classList.add("wrong");
-            feedback.innerText = `✗ Falsch! Correct: -${correctAnsw}`;
-            feedback.style.color = "var(--error)";
-        }
-
-        inputField.disabled = true;
-        document.getElementById('action-btn').innerText = "Next Question";
-        isChecking = false;
-    }
-
-    function nextExercise() {
-        currentIdx = (currentIdx + 1) % exercises.length;
-        showExercise();
-    }
-
-    // Start the app
-    window.onload = init;
+    window.onload = initMenu;
 </script>
 </body>
-</html> 
+</html>
