@@ -1,0 +1,22 @@
+const strongExercises = [
+    { sentence: "Kalt__ Tee ist erfrischend.", ending: "er", context: "Nom / Masc" },
+    { sentence: "Frisch__ Brot riecht gut.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Gut__ Freunde sind selten.", ending: "e", context: "Nom / Plur" },
+    { sentence: "Ich trinke schwarz__ Kaffee.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Mit viel__ Dank.", ending: "em", context: "Dat / Masc" },
+    { sentence: "Bei stark__ Regen bleiben wir.", ending: "em", context: "Dat / Masc" },
+    { sentence: "Trotz heiß__ Wetter...", ending: "en", context: "Gen / Neut (Special)" },
+    { sentence: "Lecker__ Suppe kochen.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Jung__ Leute reisen viel.", ending: "e", context: "Nom / Plur" },
+    { sentence: "Ich esse gern spanisch__ Reis.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Dunkl__ Bier schmeckt herb.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Nach lang__ Suchen...", ending: "em", context: "Dat / Neut" },
+    { sentence: "Aus rein__ Liebe.", ending: "er", context: "Dat / Fem" },
+    { sentence: "Deutsch__ Grammatik ist schwer.", ending: "e", context: "Nom / Fem" },
+    { sentence: "Süß__ Obst ist gesund.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Wir trinken kalt__ Milch.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Gut__ Reise!", ending: "e", context: "Acc / Fem" },
+    { sentence: "Viel__ Dank für alles.", ending: "er", context: "Nom / Masc" },
+    { sentence: "In tief__ Wasser tauchen.", ending: "em", context: "Dat / Neut" },
+    { sentence: "Teuer__ Schmuck kaufen.", ending: "en", context: "Acc / Masc" }
+];
