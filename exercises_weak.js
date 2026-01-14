@@ -1,0 +1,22 @@
+const weakExercises = [
+    { sentence: "Der neu__ Computer ist schnell.", ending: "e", context: "Nom / Masc" },
+    { sentence: "Ich sehe die klein__ Katze.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Das teuer__ Auto gehört ihm.", ending: "e", context: "Nom / Neut" },
+    { sentence: "Die fleißig__ Studenten lernen.", ending: "en", context: "Nom / Plur" },
+    { sentence: "Er kauft den rot__ Apfel.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Wir helfen der krank__ Frau.", ending: "en", context: "Dat / Fem" },
+    { sentence: "In dem groß__ Haus ist es kalt.", ending: "en", context: "Dat / Neut" },
+    { sentence: "Wegen des schlecht__ Wetters...", ending: "en", context: "Gen / Neut" },
+    { sentence: "Ich mag dieses grün__ Kleid.", ending: "e", context: "Acc / Neut" },
+    { sentence: "Jeder gut__ Freund ist Gold wert.", ending: "e", context: "Nom / Masc" },
+    { sentence: "Die alt__ Bäume fallen um.", ending: "en", context: "Nom / Plur" },
+    { sentence: "Ich höre die laut__ Musik.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Das Kind des reich__ Mannes...", ending: "en", context: "Gen / Masc" },
+    { sentence: "Mit dem scharf__ Messer schneiden.", ending: "en", context: "Dat / Neut" },
+    { sentence: "Den ganz__ Tag habe ich gewartet.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Die schön__ Blumen blühen.", ending: "en", context: "Nom / Plur" },
+    { sentence: "Aus der hoh__ Tasse trinken.", ending: "en", context: "Dat / Fem" },
+    { sentence: "Das neu__ Restaurant ist gut.", ending: "e", context: "Nom / Neut" },
+    { sentence: "Ich sehe jene schön__ Frau.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Der Preis der neu__ Uhr.", ending: "en", context: "Gen / Fem" }
+];
