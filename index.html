@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German Adjective Master</title>
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; --success: #22c55e; --error: #ef4444; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
         .hidden { display: none; }
@@ -13,13 +13,16 @@
         .menu-btn:hover { background: #eff6ff; border-color: var(--primary); transform: translateX(5px); }
         .instruction-box { line-height: 1.6; border-bottom: 1px solid #eee; padding-bottom: 20px; }
         .sentence { font-size: 1.7rem; font-weight: 700; margin: 25px 0; text-align: center; }
-        input { display: block; margin: 0 auto; font-size: 1.8rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #cbd5e1; border-radius: 0.5rem; }
-        .correct { border-color: #22c55e !important; background: #f0fdf4; }
-        .wrong { border-color: #ef4444 !important; background: #fef2f2; }
+        input { display: block; margin: 0 auto; font-size: 1.8rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #cbd5e1; border-radius: 0.5rem; outline: none; }
+        .correct { border-color: var(--success) !important; background: #f0fdf4; }
+        .wrong { border-color: var(--error) !important; background: #fef2f2; }
         button.action-btn { background: var(--primary); color: white; border: none; padding: 1rem; width: 100%; border-radius: 0.5rem; font-weight: bold; margin-top: 1.5rem; cursor: pointer; font-size: 1rem; }
         table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85rem; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
         th { background: #f1f5f9; }
+        .score-display { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 20px 0; }
+        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body>
@@ -27,25 +30,36 @@
 <div class="card">
     <div id="screen-menu">
         <h1 style="margin-top:0">Deutsch Trainer</h1>
-        <p>Select a declension type to practice:</p>
+        <p>Pick a topic (20 questions per round):</p>
         <button class="menu-btn" onclick="loadModule('weak')">1. Weak Declension (Definite)</button>
         <button class="menu-btn" onclick="loadModule('mixed')">2. Mixed Declension (Indefinite)</button>
         <button class="menu-btn" onclick="loadModule('strong')">3. Strong Declension (No Article)</button>
     </div>
 
     <div id="screen-instructions" class="hidden">
-        <button onclick="showMenu()" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0; margin-bottom:10px;">← Back to Menu</button>
+        <button onclick="showMenu()" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0; margin-bottom:10px;">← Back</button>
         <div id="instruction-content" class="instruction-box"></div>
-        <button class="action-btn" onclick="startPractice()">Start Practice</button>
+        <button class="action-btn" onclick="startPractice()">I'm Ready!</button>
     </div>
 
     <div id="screen-practice" class="hidden">
-        <div id="progress" style="font-size: 0.8rem; color: #64748b;"></div>
-        <div id="ex-context" style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"></div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div style="display:flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
+            <span id="progress-text">Question 1/20</span>
+            <span id="current-score-text">Score: 0</span>
+        </div>
+        <div id="ex-context" style="color: #64748b; font-size: 0.9rem; margin-top: 10px; text-align: center;"></div>
         <div class="sentence" id="sentence-display"></div>
         <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" spellcheck="false">
         <div id="feedback" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
         <button class="action-btn" id="action-btn" onclick="handleAction()">Check Answer</button>
+    </div>
+
+    <div id="screen-results" class="hidden" style="text-align: center;">
+        <h2>Round Complete!</h2>
+        <div class="score-display" id="final-score">0/20</div>
+        <p id="score-commentary" style="margin-bottom: 30px; font-weight: 500;"></p>
+        <button class="action-btn" onclick="showMenu()">Try Again / Another Topic</button>
     </div>
 </div>
 
@@ -55,23 +69,21 @@
 <script src="exercises_strong.js"></script>
 
 <script>
-    let activeModule = '';
     let activeData = [];
     let currentIndex = 0;
+    let score = 0;
     let isChecking = true;
+    const ROUND_LENGTH = 20;
 
     function showMenu() {
+        document.querySelectorAll('.card > div').forEach(div => div.classList.add('hidden'));
         document.getElementById('screen-menu').classList.remove('hidden');
-        document.getElementById('screen-instructions').classList.add('hidden');
-        document.getElementById('screen-practice').classList.add('hidden');
     }
 
     function loadModule(type) {
-        activeModule = type;
-        // Match the data from the imported files
-        if(type === 'weak') activeData = weakExercises;
-        if(type === 'mixed') activeData = mixedExercises;
-        if(type === 'strong') activeData = strongExercises;
+        if(type === 'weak') activeData = [...weakExercises];
+        if(type === 'mixed') activeData = [...mixedExercises];
+        if(type === 'strong') activeData = [...strongExercises];
 
         document.getElementById('screen-menu').classList.add('hidden');
         document.getElementById('screen-instructions').classList.remove('hidden');
@@ -81,16 +93,28 @@
     function startPractice() {
         document.getElementById('screen-instructions').classList.add('hidden');
         document.getElementById('screen-practice').classList.remove('hidden');
+        
         currentIndex = 0;
-        activeData.sort(() => Math.random() - 0.5); // Shuffle
+        score = 0;
+        // Shuffle the deck and take only the first 20
+        activeData.sort(() => Math.random() - 0.5);
+        activeData = activeData.slice(0, ROUND_LENGTH);
+        
         loadQuestion();
     }
 
     function loadQuestion() {
         const q = activeData[currentIndex];
-        document.getElementById('progress').innerText = `Question ${currentIndex + 1} of ${activeData.length}`;
+        
+        // Update Progress UI
+        const progressPercent = (currentIndex / ROUND_LENGTH) * 100;
+        document.getElementById('progress-fill').style.width = progressPercent + "%";
+        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${ROUND_LENGTH}`;
+        document.getElementById('current-score-text').innerText = `Score: ${score}`;
+        
         document.getElementById('ex-context').innerText = q.context;
         document.getElementById('sentence-display').innerText = q.sentence;
+        
         const input = document.getElementById('answer-input');
         input.value = ""; input.className = ""; input.disabled = false; input.focus();
         document.getElementById('feedback').innerText = "";
@@ -99,27 +123,52 @@
     }
 
     function handleAction() {
+        const input = document.getElementById('answer-input');
+        const feedback = document.getElementById('feedback');
+        const actionBtn = document.getElementById('action-btn');
+
         if (isChecking) {
-            const user = document.getElementById('answer-input').value.toLowerCase().trim();
-            const correct = activeData[currentIndex].ending;
-            const input = document.getElementById('answer-input');
-            const feedback = document.getElementById('feedback');
+            const user = input.value.toLowerCase().trim();
+            const correct = activeData[currentIndex].ending.toLowerCase();
 
             if (user === correct) {
                 input.classList.add("correct");
-                feedback.innerText = "✓ Richtig!"; feedback.style.color = "#22c55e";
+                feedback.innerText = "✓ Richtig!";
+                feedback.style.color = "var(--success)";
+                score++;
             } else {
                 input.classList.add("wrong");
-                feedback.innerText = `✗ Falsch! Correct: -${correct}`; feedback.style.color = "#ef4444";
+                feedback.innerText = `✗ Falsch! Correct: -${correct}`;
+                feedback.style.color = "var(--error)";
             }
+            
             input.disabled = true;
-            document.getElementById('action-btn').innerText = "Next";
+            actionBtn.innerText = "Next Question";
             isChecking = false;
         } else {
             currentIndex++;
-            if (currentIndex < activeData.length) loadQuestion();
-            else { alert("Module finished!"); showMenu(); }
+            if (currentIndex < ROUND_LENGTH) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
         }
+    }
+
+    function showResults() {
+        document.getElementById('screen-practice').classList.add('hidden');
+        document.getElementById('screen-results').classList.remove('hidden');
+        
+        const finalScoreElem = document.getElementById('final-score');
+        finalScoreElem.innerText = `${score}/${ROUND_LENGTH}`;
+        
+        const commentary = document.getElementById('score-commentary');
+        const percentage = (score / ROUND_LENGTH) * 100;
+        
+        if (percentage === 100) commentary.innerText = "Perfekt! Du bist ein Grammatik-Meister! 🏆";
+        else if (percentage >= 80) commentary.innerText = "Sehr gut! Keep it up! 🌟";
+        else if (percentage >= 50) commentary.innerText = "Gute Arbeit! Continue practicing. 👍";
+        else commentary.innerText = "Don't give up! Look at the rules and try again. 💪";
     }
 </script>
 </body>
