@@ -2,78 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German Ending Trainer</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f9; }
-        .card { background: white; padding: 2rem; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
-        .sentence { font-size: 1.5rem; margin-bottom: 20px; }
-        input { font-size: 1.2rem; width: 60px; text-align: center; border: 2px solid #ddd; border-radius: 4px; }
-        .correct { border-color: #4CAF50; background: #e8f5e9; }
-        .wrong { border-color: #f44336; background: #ffebee; }
-        button { margin-top: 20px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
-        #feedback { margin-top: 15px; font-weight: bold; }
+        :root { --primary: #007bff; --success: #28a745; --error: #dc3545; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 450px; text-align: center; }
+        .context-label { color: #6c757d; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .sentence { font-size: 1.6rem; font-weight: 600; margin: 20px 0; color: #1a1a1a; }
+        .input-group { margin: 20px 0; }
+        input { font-size: 1.5rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #dee2e6; border-radius: 8px; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: var(--primary); }
+        .correct { border-color: var(--success) !important; background: #e9f7ef; }
+        .wrong { border-color: var(--error) !important; background: #fdf2f2; }
+        button { background: var(--primary); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        #feedback { margin-top: 20px; min-height: 24px; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Fill in the Ending</h2>
-    <div id="exercise-container">
-        <p id="context" style="color: #666; font-style: italic;"></p>
-        <p class="sentence" id="sentence-display"></p>
-        <input type="text" id="answer-input" autocomplete="off">
-        <div id="feedback"></div>
-        <button onclick="checkAnswer()" id="action-btn">Check</button>
+    <div class="context-label" id="context">Loading...</div>
+    <div class="sentence" id="sentence-display">---</div>
+    
+    <div class="input-group">
+        <input type="text" id="answer-input" placeholder="--" autocomplete="off" autocapitalize="off">
     </div>
+
+    <div id="feedback"></div>
+    <button onclick="handleAction()" id="action-btn">Check Answer</button>
 </div>
 
+<script src="exercises.js"></script>
+
 <script>
-    const exercises = [
-        { sentence: "Der gut__ Mann", ending: "e", context: "Nominative / Masculine / Definite" },
-        { sentence: "Ich sehe den klein__ Hund", ending: "en", context: "Accusative / Masculine / Definite" },
-        { sentence: "Mit einem kalt__ Getränk", ending: "en", context: "Dative / Neuter / Indefinite" },
-        { sentence: "Die schön__ Frau", ending: "e", context: "Nominative / Feminine / Definite" }
-    ];
-
     let currentIdx = 0;
+    let isChecking = true;
 
-    function loadExercise() {
+    function init() {
+        if (typeof exercises === 'undefined' || exercises.length === 0) {
+            document.getElementById('sentence-display').innerText = "Error: exercises.js not found or empty.";
+            return;
+        }
+        // Optional: Shuffle exercises on start
+        exercises.sort(() => Math.random() - 0.5);
+        showExercise();
+    }
+
+    function showExercise() {
         const ex = exercises[currentIdx];
+        document.getElementById('context').innerText = ex.context;
         document.getElementById('sentence-display').innerText = ex.sentence;
-        document.getElementById('context').innerText = `Context: ${ex.context}`;
-        document.getElementById('answer-input').value = "";
-        document.getElementById('answer-input').className = "";
+        const input = document.getElementById('answer-input');
+        input.value = "";
+        input.className = "";
+        input.disabled = false;
+        input.focus();
         document.getElementById('feedback').innerText = "";
-        document.getElementById('action-btn').innerText = "Check";
-        document.getElementById('action-btn').onclick = checkAnswer;
+        document.getElementById('action-btn').innerText = "Check Answer";
+        isChecking = true;
+    }
+
+    function handleAction() {
+        if (isChecking) {
+            checkAnswer();
+        } else {
+            nextExercise();
+        }
     }
 
     function checkAnswer() {
         const userAnsw = document.getElementById('answer-input').value.toLowerCase().trim();
-        const correctAnsw = exercises[currentIdx].ending;
+        const correctAnsw = exercises[currentIdx].ending.toLowerCase();
         const inputField = document.getElementById('answer-input');
+        const feedback = document.getElementById('feedback');
 
         if (userAnsw === correctAnsw) {
-            inputField.className = "correct";
-            document.getElementById('feedback').innerText = "Richtig! Well done.";
-            document.getElementById('feedback').style.color = "green";
+            inputField.classList.add("correct");
+            feedback.innerText = "✓ Richtig!";
+            feedback.style.color = "var(--success)";
         } else {
-            inputField.className = "wrong";
-            document.getElementById('feedback').innerText = `Falsch. The correct ending is -${correctAnsw}`;
-            document.getElementById('feedback').style.color = "red";
+            inputField.classList.add("wrong");
+            feedback.innerText = `✗ Falsch! Correct: -${correctAnsw}`;
+            feedback.style.color = "var(--error)";
         }
-        
-        document.getElementById('action-btn').innerText = "Next";
-        document.getElementById('action-btn').onclick = nextExercise;
+
+        inputField.disabled = true;
+        document.getElementById('action-btn').innerText = "Next Question";
+        isChecking = false;
     }
 
     function nextExercise() {
         currentIdx = (currentIdx + 1) % exercises.length;
-        loadExercise();
+        showExercise();
     }
 
-    loadExercise();
+    // Start the app
+    window.onload = init;
 </script>
-
 </body>
 </html>
