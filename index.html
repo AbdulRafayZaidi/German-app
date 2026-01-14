@@ -3,129 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>German Grammar Coach</title>
+    <title>German Adjective Master</title>
     <style>
-        :root { --primary: #007bff; --bg: #f8f9fa; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
         .hidden { display: none; }
-        
-        /* Menu Styling */
-        .menu-btn { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; }
-        .menu-btn:hover { background: #f0f7ff; border-color: var(--primary); }
-
-        /* Explanation Styling */
-        .explanation-box { line-height: 1.6; color: #444; }
-        table { margin: 15px 0; font-size: 0.9rem; }
-        
-        /* Exercise Styling */
-        .sentence { font-size: 1.5rem; margin: 20px 0; font-weight: bold; }
-        input { font-size: 1.5rem; width: 70px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 5px; }
-        .correct { border-color: green; background: #eaffea; }
-        .wrong { border-color: red; background: #ffeaea; }
-        button.main-btn { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .menu-btn { width: 100%; padding: 1rem; margin: 0.5rem 0; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: all 0.2s; }
+        .menu-btn:hover { background: #eff6ff; border-color: var(--primary); transform: translateX(5px); }
+        .instruction-box { line-height: 1.6; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .sentence { font-size: 1.7rem; font-weight: 700; margin: 25px 0; text-align: center; }
+        input { display: block; margin: 0 auto; font-size: 1.8rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #cbd5e1; border-radius: 0.5rem; }
+        .correct { border-color: #22c55e !important; background: #f0fdf4; }
+        .wrong { border-color: #ef4444 !important; background: #fef2f2; }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 1rem; width: 100%; border-radius: 0.5rem; font-weight: bold; margin-top: 1.5rem; cursor: pointer; font-size: 1rem; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #f1f5f9; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="screen-menu">
-        <h2>Choose a Topic</h2>
-        <div id="module-list"></div>
+        <h1 style="margin-top:0">Deutsch Trainer</h1>
+        <p>Select a declension type to practice:</p>
+        <button class="menu-btn" onclick="loadModule('weak')">1. Weak Declension (Definite)</button>
+        <button class="menu-btn" onclick="loadModule('mixed')">2. Mixed Declension (Indefinite)</button>
+        <button class="menu-btn" onclick="loadModule('strong')">3. Strong Declension (No Article)</button>
     </div>
 
-    <div id="screen-explanation" class="hidden">
-        <h2 id="exp-title"></h2>
-        <div id="exp-content" class="explanation-box"></div>
-        <button class="main-btn" onclick="startExercise()">I'm Ready!</button>
+    <div id="screen-instructions" class="hidden">
+        <button onclick="showMenu()" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0; margin-bottom:10px;">← Back to Menu</button>
+        <div id="instruction-content" class="instruction-box"></div>
+        <button class="action-btn" onclick="startPractice()">Start Practice</button>
     </div>
 
-    <div id="screen-exercise" class="hidden">
-        <small id="ex-context" style="color: #888"></small>
+    <div id="screen-practice" class="hidden">
+        <div id="progress" style="font-size: 0.8rem; color: #64748b;"></div>
+        <div id="ex-context" style="color: #64748b; font-size: 0.9rem; margin-top: 10px;"></div>
         <div class="sentence" id="sentence-display"></div>
-        <input type="text" id="answer-input" autocomplete="off" autocapitalize="off">
-        <div id="feedback" style="margin-top: 10px; font-weight: bold;"></div>
-        <button class="main-btn" id="action-btn" onclick="handleAction()">Check</button>
+        <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div id="feedback" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
+        <button class="action-btn" id="action-btn" onclick="handleAction()">Check Answer</button>
     </div>
 </div>
 
-<script src="exercises.js"></script>
+<script src="instructions.js"></script>
+<script src="exercises_weak.js"></script>
+<script src="exercises_mixed.js"></script>
+<script src="exercises_strong.js"></script>
+
 <script>
-    let currentModule = null;
-    let currentQIdx = 0;
+    let activeModule = '';
+    let activeData = [];
+    let currentIndex = 0;
     let isChecking = true;
 
-    function initMenu() {
-        const list = document.getElementById('module-list');
-        exerciseModules.forEach((mod, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'menu-btn';
-            btn.innerHTML = `<b>${index + 1}.</b> ${mod.title}`;
-            btn.onclick = () => showExplanation(index);
-            list.appendChild(btn);
-        });
+    function showMenu() {
+        document.getElementById('screen-menu').classList.remove('hidden');
+        document.getElementById('screen-instructions').classList.add('hidden');
+        document.getElementById('screen-practice').classList.add('hidden');
     }
 
-    function showExplanation(index) {
-        currentModule = exerciseModules[index];
+    function loadModule(type) {
+        activeModule = type;
+        // Match the data from the imported files
+        if(type === 'weak') activeData = weakExercises;
+        if(type === 'mixed') activeData = mixedExercises;
+        if(type === 'strong') activeData = strongExercises;
+
         document.getElementById('screen-menu').classList.add('hidden');
-        document.getElementById('screen-explanation').classList.remove('hidden');
-        document.getElementById('exp-title').innerText = currentModule.title;
-        document.getElementById('exp-content').innerHTML = currentModule.explanation;
+        document.getElementById('screen-instructions').classList.remove('hidden');
+        document.getElementById('instruction-content').innerHTML = grammarInstructions[type];
     }
 
-    function startExercise() {
-        document.getElementById('screen-explanation').classList.add('hidden');
-        document.getElementById('screen-exercise').classList.remove('hidden');
-        currentQIdx = 0;
+    function startPractice() {
+        document.getElementById('screen-instructions').classList.add('hidden');
+        document.getElementById('screen-practice').classList.remove('hidden');
+        currentIndex = 0;
+        activeData.sort(() => Math.random() - 0.5); // Shuffle
         loadQuestion();
     }
 
     function loadQuestion() {
-        const q = currentModule.questions[currentQIdx];
-        document.getElementById('sentence-display').innerText = q.sentence;
+        const q = activeData[currentIndex];
+        document.getElementById('progress').innerText = `Question ${currentIndex + 1} of ${activeData.length}`;
         document.getElementById('ex-context').innerText = q.context;
+        document.getElementById('sentence-display').innerText = q.sentence;
         const input = document.getElementById('answer-input');
-        input.value = "";
-        input.className = "";
-        input.disabled = false;
-        input.focus();
+        input.value = ""; input.className = ""; input.disabled = false; input.focus();
         document.getElementById('feedback').innerText = "";
-        document.getElementById('action-btn').innerText = "Check";
+        document.getElementById('action-btn').innerText = "Check Answer";
         isChecking = true;
     }
 
     function handleAction() {
         if (isChecking) {
-            const userAnsw = document.getElementById('answer-input').value.toLowerCase().trim();
-            const correctAnsw = currentModule.questions[currentQIdx].ending;
+            const user = document.getElementById('answer-input').value.toLowerCase().trim();
+            const correct = activeData[currentIndex].ending;
             const input = document.getElementById('answer-input');
-            
-            if (userAnsw === correctAnsw) {
-                input.className = "correct";
-                document.getElementById('feedback').innerText = "✓ Richtig!";
-                document.getElementById('feedback').style.color = "green";
+            const feedback = document.getElementById('feedback');
+
+            if (user === correct) {
+                input.classList.add("correct");
+                feedback.innerText = "✓ Richtig!"; feedback.style.color = "#22c55e";
             } else {
-                input.className = "wrong";
-                document.getElementById('feedback').innerText = `✗ Falsch! Correct: -${correctAnsw}`;
-                document.getElementById('feedback').style.color = "red";
+                input.classList.add("wrong");
+                feedback.innerText = `✗ Falsch! Correct: -${correct}`; feedback.style.color = "#ef4444";
             }
             input.disabled = true;
             document.getElementById('action-btn').innerText = "Next";
             isChecking = false;
         } else {
-            currentQIdx++;
-            if (currentQIdx < currentModule.questions.length) {
-                loadQuestion();
-            } else {
-                alert("Module Complete!");
-                location.reload(); // Go back to menu
-            }
+            currentIndex++;
+            if (currentIndex < activeData.length) loadQuestion();
+            else { alert("Module finished!"); showMenu(); }
         }
     }
-
-    window.onload = initMenu;
 </script>
 </body>
 </html>
-
