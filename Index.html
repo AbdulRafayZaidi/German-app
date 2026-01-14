@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>German Ending Trainer</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f9; }
+        .card { background: white; padding: 2rem; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        .sentence { font-size: 1.5rem; margin-bottom: 20px; }
+        input { font-size: 1.2rem; width: 60px; text-align: center; border: 2px solid #ddd; border-radius: 4px; }
+        .correct { border-color: #4CAF50; background: #e8f5e9; }
+        .wrong { border-color: #f44336; background: #ffebee; }
+        button { margin-top: 20px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        #feedback { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Fill in the Ending</h2>
+    <div id="exercise-container">
+        <p id="context" style="color: #666; font-style: italic;"></p>
+        <p class="sentence" id="sentence-display"></p>
+        <input type="text" id="answer-input" autocomplete="off">
+        <div id="feedback"></div>
+        <button onclick="checkAnswer()" id="action-btn">Check</button>
+    </div>
+</div>
+
+<script>
+    const exercises = [
+        { sentence: "Der gut__ Mann", ending: "e", context: "Nominative / Masculine / Definite" },
+        { sentence: "Ich sehe den klein__ Hund", ending: "en", context: "Accusative / Masculine / Definite" },
+        { sentence: "Mit einem kalt__ Getränk", ending: "en", context: "Dative / Neuter / Indefinite" },
+        { sentence: "Die schön__ Frau", ending: "e", context: "Nominative / Feminine / Definite" }
+    ];
+
+    let currentIdx = 0;
+
+    function loadExercise() {
+        const ex = exercises[currentIdx];
+        document.getElementById('sentence-display').innerText = ex.sentence;
+        document.getElementById('context').innerText = `Context: ${ex.context}`;
+        document.getElementById('answer-input').value = "";
+        document.getElementById('answer-input').className = "";
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('action-btn').innerText = "Check";
+        document.getElementById('action-btn').onclick = checkAnswer;
+    }
+
+    function checkAnswer() {
+        const userAnsw = document.getElementById('answer-input').value.toLowerCase().trim();
+        const correctAnsw = exercises[currentIdx].ending;
+        const inputField = document.getElementById('answer-input');
+
+        if (userAnsw === correctAnsw) {
+            inputField.className = "correct";
+            document.getElementById('feedback').innerText = "Richtig! Well done.";
+            document.getElementById('feedback').style.color = "green";
+        } else {
+            inputField.className = "wrong";
+            document.getElementById('feedback').innerText = `Falsch. The correct ending is -${correctAnsw}`;
+            document.getElementById('feedback').style.color = "red";
+        }
+        
+        document.getElementById('action-btn').innerText = "Next";
+        document.getElementById('action-btn').onclick = nextExercise;
+    }
+
+    function nextExercise() {
+        currentIdx = (currentIdx + 1) % exercises.length;
+        loadExercise();
+    }
+
+    loadExercise();
+</script>
+
+</body>
+</html>
