@@ -1,0 +1,22 @@
+const mixedExercises = [
+    { sentence: "Ein gut__ Wein schmeckt.", ending: "er", context: "Nom / Masc" },
+    { sentence: "Eine klein__ Pause machen.", ending: "e", context: "Acc / Fem" },
+    { sentence: "Mein alt__ Auto ist kaputt.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Keine schön__ Blumen hier.", ending: "en", context: "Nom / Plur" },
+    { sentence: "Ich habe einen neu__ Job.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Mit meiner best__ Freundin.", ending: "en", context: "Dat / Fem" },
+    { sentence: "Ein warm__ Bad nehmen.", ending: "es", context: "Acc / Neut" },
+    { sentence: "Das ist ein schwierig__ Fall.", ending: "er", context: "Nom / Masc" },
+    { sentence: "In einem klein__ Dorf wohnen.", ending: "en", context: "Dat / Neut" },
+    { sentence: "Ich besuche mein__ alt__ Opa.", ending: "en", context: "Acc / Masc" },
+    { sentence: "Ein hell__ Licht leuchtet.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Haben Sie eine frei__ Stelle?", ending: "e", context: "Acc / Fem" },
+    { sentence: "Wegen eines wichtig__ Termins.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Er kommt mit seinen neu__ Schuhen.", ending: "en", context: "Dat / Plur" },
+    { sentence: "Kein gesund__ Mensch raucht.", ending: "er", context: "Nom / Masc" },
+    { sentence: "Wir suchen ein ruhig__ Hotel.", ending: "es", context: "Acc / Neut" },
+    { sentence: "Eine nett__ Geste zeigen.", ending: "e", context: "Nom / Fem" },
+    { sentence: "In deiner alt__ Wohnung.", ending: "en", context: "Dat / Fem" },
+    { sentence: "Sein neu__ Buch ist toll.", ending: "es", context: "Nom / Neut" },
+    { sentence: "Ich sehe keine groß__ Probleme.", ending: "en", context: "Acc / Plur" }
+];
