@@ -7,7 +7,7 @@ const advancedExercises = [
   { sentence: "Aus tief__ Respekt lobte er die ehrlich__ Arbeit.", ending: ["em","e"], context: "Strong Dat / Weak Acc" },
   { sentence: "Ein klein__ Fehler kann große__ Folgen haben.", ending: ["er","e"], context: "Mixed Nom / Strong Acc" },
   { sentence: "Die modern__ Technik erleichtert den schwierig__ Alltag.", ending: ["e","en"], context: "Weak Nom / Weak Acc" },
-  { sentence: "Wegen schlecht__ Wetters fiel das geplant__ Treffen aus.", ending: ["en","e"], context: "Weak Gen / Weak Nom" },
+  { sentence: "Wegen des schlecht__ Wetters fiel das geplant__ Treffen aus.", ending: ["en","e"], context: "Weak Gen / Weak Nom" },
   { sentence: "Der alt__ Mann mit dem grau__ Bart lächelt freundlich.", ending: ["e","en"], context: "Weak Nom / Weak Dat" },
 
   { sentence: "Ein klug__ Student stellt dem bekannt__ Professor eine interessant__ Frage.", ending: ["er","en","e"], context: "Mixed Nom / Weak Dat / Mixed Acc" },
