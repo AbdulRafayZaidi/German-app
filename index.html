@@ -171,5 +171,121 @@
         else commentary.innerText = "Don't give up! Look at the rules and try again. 💪";
     }
 </script>
+<script>
+    let activeData = [];
+    let currentIndex = 0;
+    let score = 0;
+    let isChecking = true;
+    const ROUND_LENGTH = 20;
+
+    function showMenu() {
+        document.querySelectorAll('.card > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    function loadModule(type) {
+        if(type === 'weak') activeData = [...weakExercises];
+        if(type === 'mixed') activeData = [...mixedExercises];
+        if(type === 'strong') activeData = [...strongExercises];
+
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-instructions').classList.remove('hidden');
+        document.getElementById('instruction-content').innerHTML = grammarInstructions[type];
+    }
+
+    function startPractice() {
+        document.getElementById('screen-instructions').classList.add('hidden');
+        document.getElementById('screen-practice').classList.remove('hidden');
+        
+        currentIndex = 0;
+        score = 0;
+        activeData.sort(() => Math.random() - 0.5);
+        activeData = activeData.slice(0, ROUND_LENGTH);
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = activeData[currentIndex];
+        const progressPercent = (currentIndex / ROUND_LENGTH) * 100;
+        document.getElementById('progress-fill').style.width = progressPercent + "%";
+        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${ROUND_LENGTH}`;
+        document.getElementById('current-score-text').innerText = `Score: ${score}`;
+        
+        document.getElementById('ex-context').innerText = q.context;
+        document.getElementById('sentence-display').innerText = q.sentence;
+        
+        const input = document.getElementById('answer-input');
+        input.value = ""; input.className = ""; input.disabled = false; input.focus();
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('action-btn').innerText = "Check Answer";
+        isChecking = true;
+    }
+
+    function handleAction() {
+        const input = document.getElementById('answer-input');
+        const feedback = document.getElementById('feedback');
+        const actionBtn = document.getElementById('action-btn');
+
+        if (isChecking) {
+            const user = input.value.toLowerCase().trim();
+            const correct = activeData[currentIndex].ending.toLowerCase();
+
+            if (user === correct) {
+                input.classList.add("correct");
+                feedback.innerText = "✓ Richtig!";
+                feedback.style.color = "var(--success)";
+                score++;
+            } else {
+                input.classList.add("wrong");
+                feedback.innerText = `✗ Falsch! Correct: -${correct}`;
+                feedback.style.color = "var(--error)";
+            }
+            
+            input.disabled = true;
+            actionBtn.innerText = "Next Question";
+            actionBtn.focus(); // Move focus to button so pressing Enter again works
+            isChecking = false;
+        } else {
+            currentIndex++;
+            if (currentIndex < ROUND_LENGTH) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+    }
+
+    function showResults() {
+        document.getElementById('screen-practice').classList.add('hidden');
+        document.getElementById('screen-results').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score}/${ROUND_LENGTH}`;
+        
+        const commentary = document.getElementById('score-commentary');
+        const percentage = (score / ROUND_LENGTH) * 100;
+        if (percentage === 100) commentary.innerText = "Perfekt! Du bist ein Grammatik-Meister! 🏆";
+        else if (percentage >= 80) commentary.innerText = "Sehr gut! Keep it up! 🌟";
+        else if (percentage >= 50) commentary.innerText = "Gute Arbeit! Continue practicing. 👍";
+        else commentary.innerText = "Don't give up! Look at the rules and try again. 💪";
+    }
+
+    // NEW: Keyboard Support Logic
+    window.onload = () => {
+        // Listen for "Enter" key on the input field
+        document.getElementById('answer-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleAction();
+            }
+        });
+
+        // Also allow "Enter" to work when the "Next" button is focused
+        document.getElementById('action-btn').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleAction();
+            }
+        });
+    };
+</script>
+
 </body>
 </html>
