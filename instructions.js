@@ -30,5 +30,16 @@ const grammarInstructions = {
             <tr><td>Acc</td><td>-en</td><td>-e</td><td>-es</td><td>-e</td></tr>
             <tr><td>Dat</td><td>-em</td><td>-er</td><td>-em</td><td>-en</td></tr>
         </table>
-    `
+    `,
+    // Add this to your grammarInstructions object
+advanced: `
+    <h2>Advanced Challenge</h2>
+    <p>In this mode, you will encounter sentences with <b>2 or 3 blanks</b>.</p>
+    <ul>
+        <li>You must switch between <b>Weak, Mixed, and Strong</b> logic within the same sentence.</li>
+        <li>Identify the "Determiner" (Article) for <i>each</i> noun individually.</li>
+        <li>One mistake in any blank makes the whole sentence "Falsch".</li>
+    </ul>
+    <p><i>Focus on the relationship between the Article and the Adjective for every single word.</i></p>
+`
 };
