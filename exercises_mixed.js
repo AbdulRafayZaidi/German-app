@@ -1,5 +1,5 @@
 const mixedExercises = [
-    // ===== NOMINATIVE =====
+    // ===== NOMINATIVE (M: -er, F: -e, N: -es, P: -en) =====
     { sentence: "Ein alt__ Mann wartet.", ending: "er", context: "Nom / Masc" },
     { sentence: "Eine schön__ Blume blüht.", ending: "e", context: "Nom / Fem" },
     { sentence: "Ein neu__ Haus steht dort.", ending: "es", context: "Nom / Neut" },
@@ -21,7 +21,7 @@ const mixedExercises = [
     { sentence: "Mein alt__ Fahrrad rostet.", ending: "es", context: "Nom / Neut" },
     { sentence: "Deine lieb__ Eltern helfen.", ending: "en", context: "Nom / Plur" },
 
-    // ===== ACCUSATIVE =====
+    // ===== ACCUSATIVE (M: -en, F: -e, N: -es, P: -en) =====
     { sentence: "Ich sehe einen alt__ Mann.", ending: "en", context: "Acc / Masc" },
     { sentence: "Sie kauft eine schön__ Blume.", ending: "e", context: "Acc / Fem" },
     { sentence: "Wir mieten ein neu__ Haus.", ending: "es", context: "Acc / Neut" },
@@ -43,7 +43,7 @@ const mixedExercises = [
     { sentence: "Ich höre dein laut__ Radio.", ending: "es", context: "Acc / Neut" },
     { sentence: "Wir kaufen keine alt__ Möbel.", ending: "en", context: "Acc / Plur" },
 
-    // ===== DATIVE (always -en) =====
+    // ===== DATIVE (all genders: -en) =====
     { sentence: "Ich helfe einem alt__ Mann.", ending: "en", context: "Dat / Masc" },
     { sentence: "Sie wohnt in einer klein__ Stadt.", ending: "en", context: "Dat / Fem" },
     { sentence: "Er spielt mit einem neu__ Handy.", ending: "en", context: "Dat / Neut" },
@@ -63,5 +63,27 @@ const mixedExercises = [
     { sentence: "Er steht vor einem alt__ Haus.", ending: "en", context: "Dat / Masc" },
     { sentence: "Sie lernt von einer erfahren__ Lehrerin.", ending: "en", context: "Dat / Fem" },
     { sentence: "Wir wohnen in einem modern__ Gebäude.", ending: "en", context: "Dat / Neut" },
-    { sentence: "Ich spreche mit keinen fremd__ Menschen.", ending: "en", context: "Dat / Plur" }
+    { sentence: "Ich spreche mit keinen fremd__ Menschen.", ending: "en", context: "Dat / Plur" },
+
+    // ===== GENITIVE (all genders: -en) =====
+    { sentence: "Wegen eines alt__ Mannes.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Während einer ruhig__ Nacht.", ending: "en", context: "Gen / Fem" },
+    { sentence: "Das Dach eines neu__ Hauses.", ending: "en", context: "Gen / Neut" },
+    { sentence: "Die Stimmen meiner gut__ Freunde.", ending: "en", context: "Gen / Plur" },
+    { sentence: "Der Titel eines bekannt__ Buches.", ending: "en", context: "Gen / Neut" },
+    { sentence: "Die Tasche einer jung__ Frau.", ending: "en", context: "Gen / Fem" },
+    { sentence: "Der Hund meines alt__ Nachbarn.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Die Farbe deiner neu__ Schuhe.", ending: "en", context: "Gen / Plur" },
+    { sentence: "Das Ende eines lang__ Tages.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Die Stimme einer bekannt__ Sängerin.", ending: "en", context: "Gen / Fem" },
+    { sentence: "Der Preis eines modern__ Autos.", ending: "en", context: "Gen / Neut" },
+    { sentence: "Die Hilfe meiner lieb__ Eltern.", ending: "en", context: "Gen / Plur" },
+    { sentence: "Der Duft eines frisch__ Kaffees.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Die Tür einer alt__ Kirche.", ending: "en", context: "Gen / Fem" },
+    { sentence: "Die Qualität eines gut__ Weines.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Der Name eines neu__ Projekts.", ending: "en", context: "Gen / Neut" },
+    { sentence: "Die Reaktion meiner streng__ Lehrer.", ending: "en", context: "Gen / Plur" },
+    { sentence: "Die Erinnerung eines jung__ Kindes.", ending: "en", context: "Gen / Neut" },
+    { sentence: "Der Blick eines alt__ Mannes.", ending: "en", context: "Gen / Masc" },
+    { sentence: "Die Ruhe einer leer__ Wohnung.", ending: "en", context: "Gen / Fem" }
 ];
