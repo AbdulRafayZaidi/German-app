@@ -3,63 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>German Adjective Master</title>
+    <title>German Adjective Master: Advanced</title>
     <style>
         :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; --success: #22c55e; --error: #ef4444; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 600px; }
         .hidden { display: none; }
         .menu-btn { width: 100%; padding: 1rem; margin: 0.5rem 0; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: white; cursor: pointer; text-align: left; font-size: 1.1rem; transition: all 0.2s; }
         .menu-btn:hover { background: #eff6ff; border-color: var(--primary); transform: translateX(5px); }
-        .instruction-box { line-height: 1.6; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-        .sentence { font-size: 1.7rem; font-weight: 700; margin: 25px 0; text-align: center; }
-        input { display: block; margin: 0 auto; font-size: 1.8rem; width: 80px; padding: 10px; text-align: center; border: 3px solid #cbd5e1; border-radius: 0.5rem; outline: none; }
+        .sentence { font-size: 1.5rem; font-weight: 600; margin: 25px 0; line-height: 2; text-align: center; }
+        
+        /* Multi-input styling */
+        .blank-input { display: inline-block; font-size: 1.3rem; width: 60px; padding: 5px; text-align: center; border: 2px solid #cbd5e1; border-radius: 0.4rem; margin: 0 5px; outline: none; }
         .correct { border-color: var(--success) !important; background: #f0fdf4; }
         .wrong { border-color: var(--error) !important; background: #fef2f2; }
+        
         button.action-btn { background: var(--primary); color: white; border: none; padding: 1rem; width: 100%; border-radius: 0.5rem; font-weight: bold; margin-top: 1.5rem; cursor: pointer; font-size: 1rem; }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85rem; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background: #f1f5f9; }
-        .score-display { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 20px 0; }
         .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.8rem; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="screen-menu">
-        <h1 style="margin-top:0">Deutsch Trainer</h1>
-        <p>Pick a topic (20 questions per round):</p>
-        <button class="menu-btn" onclick="loadModule('weak')">1. Weak Declension (Definite)</button>
-        <button class="menu-btn" onclick="loadModule('mixed')">2. Mixed Declension (Indefinite)</button>
-        <button class="menu-btn" onclick="loadModule('strong')">3. Strong Declension (No Article)</button>
+        <h1>Deutsch Trainer</h1>
+        <button class="menu-btn" onclick="loadModule('weak')">1. Weak Declension</button>
+        <button class="menu-btn" onclick="loadModule('mixed')">2. Mixed Declension</button>
+        <button class="menu-btn" onclick="loadModule('strong')">3. Strong Declension</button>
+        <button class="menu-btn" style="background: #fef3c7; border-color: #f59e0b;" onclick="loadModule('advanced')">🔥 4. ADVANCED MIXED CHALLENGE</button>
     </div>
 
     <div id="screen-instructions" class="hidden">
-        <button onclick="showMenu()" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0; margin-bottom:10px;">← Back</button>
-        <div id="instruction-content" class="instruction-box"></div>
-        <button class="action-btn" onclick="startPractice()">I'm Ready!</button>
+        <button onclick="showMenu()" style="background:none; border:none; color:var(--primary); cursor:pointer;">← Back</button>
+        <div id="instruction-content"></div>
+        <button class="action-btn" onclick="startPractice()">Start Advanced Round</button>
     </div>
 
     <div id="screen-practice" class="hidden">
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
-        <div style="display:flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
-            <span id="progress-text">Question 1/20</span>
-            <span id="current-score-text">Score: 0</span>
-        </div>
-        <div id="ex-context" style="color: #64748b; font-size: 0.9rem; margin-top: 10px; text-align: center;"></div>
-        <div class="sentence" id="sentence-display"></div>
-        <input type="text" id="answer-input" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <div id="feedback" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
+        <div id="progress-text" style="font-size: 0.8rem; color: #64748b; text-align: center;"></div>
+        <div id="ex-context" style="color: #64748b; font-size: 0.8rem; margin-top: 10px; text-align: center; font-style: italic;"></div>
+        <div class="sentence" id="sentence-container"></div>
+        <div id="feedback" style="text-align:center; margin-top:10px; font-weight:bold;"></div>
         <button class="action-btn" id="action-btn" onclick="handleAction()">Check Answer</button>
     </div>
 
     <div id="screen-results" class="hidden" style="text-align: center;">
-        <h2>Round Complete!</h2>
-        <div class="score-display" id="final-score">0/20</div>
-        <p id="score-commentary" style="margin-bottom: 30px; font-weight: 500;"></p>
-        <button class="action-btn" onclick="showMenu()">Try Again / Another Topic</button>
+        <h2>Challenge Complete!</h2>
+        <div style="font-size: 3rem; font-weight: 800; color: var(--primary);" id="final-score"></div>
+        <p id="score-commentary"></p>
+        <button class="action-btn" onclick="showMenu()">Return to Menu</button>
     </div>
 </div>
 
@@ -67,6 +63,7 @@
 <script src="exercises_weak.js"></script>
 <script src="exercises_mixed.js"></script>
 <script src="exercises_strong.js"></script>
+<script src="exercises_advanced.js"></script>
 
 <script>
     let activeData = [];
@@ -82,8 +79,9 @@
 
     function loadModule(type) {
         if(type === 'weak') activeData = [...weakExercises];
-        if(type === 'mixed') activeData = [...mixedExercises];
-        if(type === 'strong') activeData = [...strongExercises];
+        else if(type === 'mixed') activeData = [...mixedExercises];
+        else if(type === 'strong') activeData = [...strongExercises];
+        else if(type === 'advanced') activeData = [...advancedExercises];
 
         document.getElementById('screen-menu').classList.add('hidden');
         document.getElementById('screen-instructions').classList.remove('hidden');
@@ -93,166 +91,86 @@
     function startPractice() {
         document.getElementById('screen-instructions').classList.add('hidden');
         document.getElementById('screen-practice').classList.remove('hidden');
-        
-        currentIndex = 0;
-        score = 0;
-        // Shuffle the deck and take only the first 20
+        currentIndex = 0; score = 0;
         activeData.sort(() => Math.random() - 0.5);
         activeData = activeData.slice(0, ROUND_LENGTH);
-        
         loadQuestion();
     }
 
     function loadQuestion() {
         const q = activeData[currentIndex];
-        
-        // Update Progress UI
-        const progressPercent = (currentIndex / ROUND_LENGTH) * 100;
-        document.getElementById('progress-fill').style.width = progressPercent + "%";
-        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${ROUND_LENGTH}`;
-        document.getElementById('current-score-text').innerText = `Score: ${score}`;
-        
+        document.getElementById('progress-fill').style.width = (currentIndex / ROUND_LENGTH * 100) + "%";
+        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${ROUND_LENGTH} | Score: ${score}`;
         document.getElementById('ex-context').innerText = q.context;
-        document.getElementById('sentence-display').innerText = q.sentence;
         
-        const input = document.getElementById('answer-input');
-        input.value = ""; input.className = ""; input.disabled = false; input.focus();
+        // Build sentence with inputs
+        const container = document.getElementById('sentence-container');
+        container.innerHTML = '';
+        const parts = q.sentence.split('__');
+        
+        parts.forEach((part, i) => {
+            container.appendChild(document.createTextNode(part));
+            if (i < parts.length - 1) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'blank-input';
+                input.dataset.index = i;
+                input.autocomplete = 'off';
+                input.autocapitalize = 'off';
+                
+                // Keyboard: Enter moves to next blank or submits
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const next = container.querySelectorAll('.blank-input')[i + 1];
+                        if (next) next.focus(); else handleAction();
+                    }
+                });
+                container.appendChild(input);
+            }
+        });
+
+        setTimeout(() => container.querySelector('input').focus(), 50);
         document.getElementById('feedback').innerText = "";
         document.getElementById('action-btn').innerText = "Check Answer";
         isChecking = true;
     }
 
     function handleAction() {
-        const input = document.getElementById('answer-input');
-        const feedback = document.getElementById('feedback');
-        const actionBtn = document.getElementById('action-btn');
-
         if (isChecking) {
-            const user = input.value.toLowerCase().trim();
-            const correct = activeData[currentIndex].ending.toLowerCase();
+            const inputs = document.querySelectorAll('.blank-input');
+            const q = activeData[currentIndex];
+            let allCorrect = true;
+            let correctAnswers = Array.isArray(q.ending) ? q.ending : [q.ending];
 
-            if (user === correct) {
-                input.classList.add("correct");
-                feedback.innerText = "✓ Richtig!";
+            inputs.forEach((input, i) => {
+                const userVal = input.value.toLowerCase().trim();
+                const correctVal = correctAnswers[i].toLowerCase();
+                
+                if (userVal === correctVal) {
+                    input.classList.add('correct');
+                } else {
+                    input.classList.add('wrong');
+                    allCorrect = false;
+                }
+                input.disabled = true;
+            });
+
+            const feedback = document.getElementById('feedback');
+            if (allCorrect) {
+                feedback.innerText = "✓ Perfekt!";
                 feedback.style.color = "var(--success)";
                 score++;
             } else {
-                input.classList.add("wrong");
-                feedback.innerText = `✗ Falsch! Correct: -${correct}`;
+                feedback.innerText = `✗ Correct: ${correctAnswers.join(' / ')}`;
                 feedback.style.color = "var(--error)";
             }
             
-            input.disabled = true;
-            actionBtn.innerText = "Next Question";
+            document.getElementById('action-btn').innerText = "Next Question";
+            document.getElementById('action-btn').focus();
             isChecking = false;
         } else {
             currentIndex++;
-            if (currentIndex < ROUND_LENGTH) {
-                loadQuestion();
-            } else {
-                showResults();
-            }
-        }
-    }
-
-    function showResults() {
-        document.getElementById('screen-practice').classList.add('hidden');
-        document.getElementById('screen-results').classList.remove('hidden');
-        
-        const finalScoreElem = document.getElementById('final-score');
-        finalScoreElem.innerText = `${score}/${ROUND_LENGTH}`;
-        
-        const commentary = document.getElementById('score-commentary');
-        const percentage = (score / ROUND_LENGTH) * 100;
-        
-        if (percentage === 100) commentary.innerText = "Perfekt! Du bist ein Grammatik-Meister! 🏆";
-        else if (percentage >= 80) commentary.innerText = "Sehr gut! Keep it up! 🌟";
-        else if (percentage >= 50) commentary.innerText = "Gute Arbeit! Continue practicing. 👍";
-        else commentary.innerText = "Don't give up! Look at the rules and try again. 💪";
-    }
-</script>
-<script>
-    let activeData = [];
-    let currentIndex = 0;
-    let score = 0;
-    let isChecking = true;
-    const ROUND_LENGTH = 20;
-
-    function showMenu() {
-        document.querySelectorAll('.card > div').forEach(div => div.classList.add('hidden'));
-        document.getElementById('screen-menu').classList.remove('hidden');
-    }
-
-    function loadModule(type) {
-        if(type === 'weak') activeData = [...weakExercises];
-        if(type === 'mixed') activeData = [...mixedExercises];
-        if(type === 'strong') activeData = [...strongExercises];
-
-        document.getElementById('screen-menu').classList.add('hidden');
-        document.getElementById('screen-instructions').classList.remove('hidden');
-        document.getElementById('instruction-content').innerHTML = grammarInstructions[type];
-    }
-
-    function startPractice() {
-        document.getElementById('screen-instructions').classList.add('hidden');
-        document.getElementById('screen-practice').classList.remove('hidden');
-        
-        currentIndex = 0;
-        score = 0;
-        activeData.sort(() => Math.random() - 0.5);
-        activeData = activeData.slice(0, ROUND_LENGTH);
-        
-        loadQuestion();
-    }
-
-    function loadQuestion() {
-        const q = activeData[currentIndex];
-        const progressPercent = (currentIndex / ROUND_LENGTH) * 100;
-        document.getElementById('progress-fill').style.width = progressPercent + "%";
-        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/${ROUND_LENGTH}`;
-        document.getElementById('current-score-text').innerText = `Score: ${score}`;
-        
-        document.getElementById('ex-context').innerText = q.context;
-        document.getElementById('sentence-display').innerText = q.sentence;
-        
-        const input = document.getElementById('answer-input');
-        input.value = ""; input.className = ""; input.disabled = false; input.focus();
-        document.getElementById('feedback').innerText = "";
-        document.getElementById('action-btn').innerText = "Check Answer";
-        isChecking = true;
-    }
-
-    function handleAction() {
-        const input = document.getElementById('answer-input');
-        const feedback = document.getElementById('feedback');
-        const actionBtn = document.getElementById('action-btn');
-
-        if (isChecking) {
-            const user = input.value.toLowerCase().trim();
-            const correct = activeData[currentIndex].ending.toLowerCase();
-
-            if (user === correct) {
-                input.classList.add("correct");
-                feedback.innerText = "✓ Richtig!";
-                feedback.style.color = "var(--success)";
-                score++;
-            } else {
-                input.classList.add("wrong");
-                feedback.innerText = `✗ Falsch! Correct: -${correct}`;
-                feedback.style.color = "var(--error)";
-            }
-            
-            input.disabled = true;
-            actionBtn.innerText = "Next Question";
-            actionBtn.focus(); // Move focus to button so pressing Enter again works
-            isChecking = false;
-        } else {
-            currentIndex++;
-            if (currentIndex < ROUND_LENGTH) {
-                loadQuestion();
-            } else {
-                showResults();
-            }
+            if (currentIndex < ROUND_LENGTH) loadQuestion(); else showResults();
         }
     }
 
@@ -260,32 +178,12 @@
         document.getElementById('screen-practice').classList.add('hidden');
         document.getElementById('screen-results').classList.remove('hidden');
         document.getElementById('final-score').innerText = `${score}/${ROUND_LENGTH}`;
-        
         const commentary = document.getElementById('score-commentary');
-        const percentage = (score / ROUND_LENGTH) * 100;
-        if (percentage === 100) commentary.innerText = "Perfekt! Du bist ein Grammatik-Meister! 🏆";
-        else if (percentage >= 80) commentary.innerText = "Sehr gut! Keep it up! 🌟";
-        else if (percentage >= 50) commentary.innerText = "Gute Arbeit! Continue practicing. 👍";
-        else commentary.innerText = "Don't give up! Look at the rules and try again. 💪";
+        const p = (score / ROUND_LENGTH) * 100;
+        if (p === 100) commentary.innerText = "UNGLAUBLICH! You mastered the Advanced Challenge! 👑";
+        else if (p >= 70) commentary.innerText = "Excellent work on a very tough level! 🏔️";
+        else commentary.innerText = "This is hard. Keep analyzing the articles and try again! 🛠️";
     }
-
-    // NEW: Keyboard Support Logic
-    window.onload = () => {
-        // Listen for "Enter" key on the input field
-        document.getElementById('answer-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleAction();
-            }
-        });
-
-        // Also allow "Enter" to work when the "Next" button is focused
-        document.getElementById('action-btn').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleAction();
-            }
-        });
-    };
 </script>
-
 </body>
 </html>
